@@ -1,7 +1,7 @@
-// Persists editable fields, images, sosmed links and audio to localStorage.
+// Persists editable fields, images, sosmed links and images to localStorage.
 // Keys used in localStorage:
 // fullName, instansi, mataPelajaran, profilePhoto, headerBg, pengalamanOrganisasiProfesi,
-// kegiatanPendampingan, kumpulanKarya, prestasiPenghargaan, tentang, sosmed (JSON), profileAudio
+// kegiatanPendampingan, kumpulanKarya, prestasiPenghargaan, tentang, sosmed (JSON)
 document.addEventListener('DOMContentLoaded', () => {
   const ls = window.localStorage;
 
@@ -54,8 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try{
         const o = JSON.parse(sos);
         if(o.youtube && document.getElementById('link-youtube')) { document.getElementById('link-youtube').href = o.youtube }
-      }catch(e){}
-    }
+      }catch(e){}}
   }
 
   // Save text fields
@@ -208,27 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sosForm.classList.add('hidden');
   });
   document.getElementById('cancel-sosmed').addEventListener('click', ()=> sosForm.classList.add('hidden'));
-
-  // --- Audio controls (basic) ---
-  const audioFile = document.getElementById('audio-file');
-  const audioEl = document.getElementById('profile-audio');
-  audioFile.addEventListener('change', async e => {
-    const f = e.target.files && e.target.files[0]; if(!f) return;
-    const data = await readFileAsDataURL(f);
-    const src = data;
-    // set source element
-    const sourceEl = document.getElementById('audio-source');
-    if(sourceEl) sourceEl.src = src;
-    audioEl.load();
-    ls.setItem('profileAudio', src);
-  });
-  document.getElementById('audio-reset').addEventListener('click', ()=>{
-    ls.removeItem('profileAudio');
-    // fallback to original file source (song.mp3)
-    const sourceEl = document.getElementById('audio-source');
-    if(sourceEl) sourceEl.src = 'song.mp3';
-    audioEl.load();
-  });
 
   // Header reset
   document.getElementById('reset-header').addEventListener('click', ()=>{
