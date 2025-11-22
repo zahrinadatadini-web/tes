@@ -1,86 +1,35 @@
 // Persists editable fields, images, sosmed links and audio to localStorage.
 // Keys used in localStorage:
-// fullName, instansi, mataPelajaran, profilePhoto, headerBg, kegiatanPengembanganDiri, pengalamanOrganisasiProfesi,
+// fullName, instansi, mataPelajaran, profilePhoto, headerBg, pengalamanOrganisasiProfesi,
 // kegiatanPendampingan, kumpulanKarya, prestasiPenghargaan, tentang, sosmed (JSON), profileAudio
-
 document.addEventListener('DOMContentLoaded', () => {
   const ls = window.localStorage;
 
-  // Elements
+  // Tabs
   const tabs = Array.from(document.querySelectorAll('.tab'));
-  const panels = Array.from(document.querySelectorAll('.tab-panel'));
-
-  const editableEls = Array.from(document.querySelectorAll('[contenteditable][data-key], #full-name, #instansi, #mata-pelajaran, [data-key="tentang"]'));
-  const profilePhoto = document.getElementById('profile-photo');
-  const photoFile = document.getElementById('photo-file');
-  const bgFile = document.getElementById('bg-file');
-  const headerEl = document.getElementById('profile-header');
-  const resetHeaderBtn = document.getElementById('reset-header');
-
-  const audioEl = document.getElementById('profile-audio');
-  const audioFile = document.getElementById('audio-file');
-  const audioReset = document.getElementById('audio-reset');
-  const audioSource = document.getElementById('audio-source');
-
-  const editSosmedBtn = document.getElementById('edit-sosmed');
-  const sosmedForm = document.getElementById('sosmed-form');
-  const inYoutube = document.getElementById('in-youtube');
-  const inTiktok = document.getElementById('in-tiktok');
-  const inIg = document.getElementById('in-ig');
-  const inEmail = document.getElementById('in-email');
-  const saveSosmedBtn = document.getElementById('save-sosmed');
-  const cancelSosmedBtn = document.getElementById('cancel-sosmed');
-
-  const linkYoutube = document.getElementById('link-youtube');
-  const linkTiktok = document.getElementById('link-tiktok');
-  const linkIg = document.getElementById('link-ig');
-  const linkEmail = document.getElementById('link-email');
-
-  // Tab logic
-  function activate(targetId, clickedTab) {
-    panels.forEach(p => {
-      const isTarget = p.id === targetId;
-      p.classList.toggle('hidden', !isTarget);
-      p.setAttribute('aria-hidden', String(!isTarget));
+  function activate(target, tabEl){
+    tabs.forEach(t=>t.classList.remove('active'));
+    tabEl && tabEl.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p=>{
+      if(p.id===target){ p.classList.remove('hidden'); p.setAttribute('aria-hidden','false')}
+      else { p.classList.add('hidden'); p.setAttribute('aria-hidden','true')}
     });
-    tabs.forEach(t => {
-      const isActive = t === clickedTab;
-      t.classList.toggle('active', isActive);
-      t.setAttribute('aria-selected', String(isActive));
-    });
-    if (history.replaceState) {
-      history.replaceState(null, '', '#' + targetId);
-    } else {
-      location.hash = targetId;
-    }
   }
   tabs.forEach(tab => tab.addEventListener('click', () => activate(tab.dataset.target, tab)));
-  const hash = (location.hash || '#beranda').replace('#', '');
-  const initial = tabs.find(t => t.dataset.target === hash) || tabs[0];
-  activate(initial.dataset.target, initial);
+  const initialHash = (location.hash || '#beranda').replace('#','');
+  const initialTab = tabs.find(t=>t.dataset.target===initialHash) || tabs[0];
+  activate(initialTab.dataset.target, initialTab);
 
-  // Utility: read file as dataURL and return Promise
-  function readFileAsDataURL(file) {
-    return new Promise((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = () => res(fr.result);
-      fr.onerror = rej;
-      fr.readAsDataURL(file);
-    });
-  }
+  // Utility: read file as dataURL
+  function readFileAsDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); })}
 
-  // Load saved fields
-  function loadProfile() {
-    const fullName = ls.getItem('fullName');
-    if (fullName) document.getElementById('full-name').textContent = fullName;
-
-    const inst = ls.getItem('instansi');
-    if (inst) document.getElementById('instansi').textContent = inst;
-
-    const mata = ls.getItem('mataPelajaran');
-    if (mata) document.getElementById('mata-pelajaran').textContent = mata;
-
-    // content sections
+  // Load profile basics
+  function loadProfile(){
+    const fullName = ls.getItem('fullName'); if(fullName) document.getElementById('full-name').textContent = fullName;
+    const inst = ls.getItem('instansi'); if(inst) document.getElementById('instansi').textContent = inst;
+    const mata = ls.getItem('mataPelajaran'); if(mata) document.getElementById('mata-pelajaran').textContent = mata;
+    const photo = ls.getItem('profilePhoto'); if(photo) document.getElementById('profile-photo').src = photo;
+    // load editable sections text
     const keys = [
       {key:'kegiatanPengembanganDiri', sel:'#kegiatan-pengembangan-diri .editable'},
       {key:'pengalamanOrganisasiProfesi', sel:'#pengalaman-organisasi-profesi .editable'},
@@ -89,188 +38,204 @@ document.addEventListener('DOMContentLoaded', () => {
       {key:'prestasiPenghargaan', sel:'#prestasi-penghargaan .editable'},
       {key:'tentang', sel:'#tentang .editable'}
     ];
-    keys.forEach(k => {
+    keys.forEach(k=>{
       const v = ls.getItem(k.key);
-      if (v !== null) {
-        const el = document.querySelector(k.sel);
-        if (el) el.innerHTML = v;
-      }
+      if(v && document.querySelector(k.sel)) document.querySelector(k.sel).innerHTML = v;
     });
-
-    // profile photo
-    const photoData = ls.getItem('profilePhoto');
-    if (photoData) profilePhoto.src = photoData;
-
-    // header background
-    const bgData = ls.getItem('headerBg');
-    if (bgData) headerEl.style.backgroundImage = `url(${bgData})`;
-
-    // sosmed
-    const sosmed = JSON.parse(ls.getItem('sosmed') || '{}');
-    if (sosmed.youtube) linkYoutube.href = sosmed.youtube;
-    if (sosmed.tiktok) linkTiktok.href = sosmed.tiktok;
-    if (sosmed.instagram) linkIg.href = sosmed.instagram;
-    if (sosmed.email) linkEmail.href = `mailto:${sosmed.email}`;
-
-    // audio
-    const audioData = ls.getItem('profileAudio');
-    if (audioData) {
-      audioEl.src = audioData;
-      audioEl.load();
-    } else if (audioSource && audioSource.src) {
-      // keep default provided in DOM
+    // load slider images
+    loadSliderState('pengalamanFotos','#pengalaman-organisasi-profesi');
+    loadSliderState('pendampinganFotos','#kegiatan-pendampingan');
+    // load youtube karya
+    const yt = ls.getItem('karyaYouTube');
+    if(yt) setKaryaYoutube(yt);
+    // load sosmed
+    const sos = ls.getItem('sosmed');
+    if(sos){
+      try{
+        const o = JSON.parse(sos);
+        if(o.youtube && document.getElementById('link-youtube')) { document.getElementById('link-youtube').href = o.youtube }
+      }catch(e){}
     }
   }
 
-  // Save simple text fields when they change
-  // Full name, instansi, mataPelajaran
-  document.getElementById('full-name').addEventListener('input', e => ls.setItem('fullName', e.target.textContent.trim()));
-  document.getElementById('instansi').addEventListener('input', e => ls.setItem('instansi', e.target.textContent.trim()));
-  document.getElementById('mata-pelajaran').addEventListener('input', e => ls.setItem('mataPelajaran', e.target.textContent.trim()));
+  // Save text fields
+  document.getElementById('full-name').addEventListener('input', e=> ls.setItem('fullName', e.target.textContent.trim()));
+  document.getElementById('instansi').addEventListener('input', e=> ls.setItem('instansi', e.target.textContent.trim()));
+  document.getElementById('mata-pelajaran').addEventListener('input', e=> ls.setItem('mataPelajaran', e.target.textContent.trim()));
 
-  // Save editable sections on input (autosave)
+  // Save editable sections autosave
   const editableSections = Array.from(document.querySelectorAll('.editable'));
-  editableSections.forEach(el => {
+  editableSections.forEach(el=>{
     const key = el.dataset.key;
-    if (!key) return;
+    if(!key) return;
     el.addEventListener('input', () => {
-      // save innerHTML so formatting/line breaks preserved
       ls.setItem(key, el.innerHTML);
     });
   });
 
-  // Image upload handlers (profile photo)
-  photoFile.addEventListener('change', async (ev) => {
-    const f = ev.target.files && ev.target.files[0];
-    if (!f) return;
-    try {
-      const data = await readFileAsDataURL(f);
-      profilePhoto.src = data;
-      ls.setItem('profilePhoto', data);
-    } catch (err) {
-      console.error('Error reading photo', err);
-    }
-    photoFile.value = '';
+  // Profile photo/background handlers (kept basic)
+  const photoFile = document.getElementById('photo-file');
+  photoFile.addEventListener('change', async (e)=>{
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const data = await readFileAsDataURL(f);
+    document.getElementById('profile-photo').src = data;
+    ls.setItem('profilePhoto', data);
   });
 
-  // Header background upload
-  bgFile.addEventListener('change', async (ev) => {
-    const f = ev.target.files && ev.target.files[0];
-    if (!f) return;
-    try {
-      const data = await readFileAsDataURL(f);
-      headerEl.style.backgroundImage = `url(${data})`;
-      ls.setItem('headerBg', data);
-    } catch (err) {
-      console.error('Error reading background', err);
-    }
-    bgFile.value = '';
-  });
-
-  resetHeaderBtn.addEventListener('click', () => {
-    ls.removeItem('profilePhoto');
-    ls.removeItem('headerBg');
-    profilePhoto.src = 'avatar.svg';
-    headerEl.style.backgroundImage = '';
-  });
-
-  // Audio: read as dataURL and save (note: localStorage size limits)
-  audioFile.addEventListener('change', async (ev) => {
-    const f = ev.target.files && ev.target.files[0];
-    if (!f) return;
-    try {
-      const data = await readFileAsDataURL(f);
-      audioEl.src = data;
-      audioEl.load();
-      ls.setItem('profileAudio', data);
-    } catch (err) {
-      console.error('Error reading audio', err);
-      alert('Gagal membaca file audio. Pastikan ukuran tidak terlalu besar.');
-    }
-    audioFile.value = '';
-  });
-
-  audioReset.addEventListener('click', () => {
-    ls.removeItem('profileAudio');
-    // restore default if present
-    const defaultSrc = audioSource && audioSource.src ? audioSource.src : '';
-    if (defaultSrc) {
-      audioEl.src = defaultSrc;
-      audioEl.load();
-    } else {
-      audioEl.removeAttribute('src');
-      audioEl.load();
-    }
-  });
-
-  // Sosmed edit flow
-  editSosmedBtn.addEventListener('click', () => {
-    sosmedForm.classList.toggle('hidden');
-    // prefill with current values
-    const sosmed = JSON.parse(ls.getItem('sosmed') || '{}');
-    inYoutube.value = sosmed.youtube || '';
-    inTiktok.value = sosmed.tiktok || '';
-    inIg.value = sosmed.instagram || '';
-    inEmail.value = sosmed.email || '';
-  });
-
-  cancelSosmedBtn.addEventListener('click', () => {
-    sosmedForm.classList.add('hidden');
-  });
-
-  saveSosmedBtn.addEventListener('click', () => {
-    const obj = {
-      youtube: inYoutube.value.trim(),
-      tiktok: inTiktok.value.trim(),
-      instagram: inIg.value.trim(),
-      email: inEmail.value.trim()
-    };
-    ls.setItem('sosmed', JSON.stringify(obj));
-    // apply
-    linkYoutube.href = obj.youtube || '#';
-    linkTiktok.href = obj.tiktok || '#';
-    linkIg.href = obj.instagram || '#';
-    linkEmail.href = obj.email ? `mailto:${obj.email}` : 'mailto:';
-    sosmedForm.classList.add('hidden');
-  });
-
-  // Smooth scroll for subnav anchors
-  const subnavLinks = Array.from(document.querySelectorAll('.beranda-subnav a'));
-  subnavLinks.forEach(a => {
-    a.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const id = a.getAttribute('href').replace('#', '');
-      const el = document.getElementById(id);
-      if (!el) return;
-      const berandaTab = tabs.find(t => t.dataset.target === 'beranda');
-      if (berandaTab) activate('beranda', berandaTab);
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-
-  // initial load
-  loadProfile();
-
-  // accessibility: save content on blur too (for browsers that don't send input)
-  editableEls.forEach(el => {
-    el.addEventListener('blur', () => {
-      // If it has data-key, save innerHTML; else save textContent for name/instansi/mataPelajaran
-      const k = el.dataset.key;
-      if (k) ls.setItem(k, el.innerHTML);
-      else {
-        if (el.id === 'full-name') ls.setItem('fullName', el.textContent.trim());
-        if (el.id === 'instansi') ls.setItem('instansi', el.textContent.trim());
-        if (el.id === 'mata-pelajaran') ls.setItem('mataPelajaran', el.textContent.trim());
-      }
-    });
-  });
-
-  // Inform user if localStorage is near full (best-effort)
-  try {
-    // try writing a small test key and removing it
-    ls.setItem('__ls_test', '1');
-    ls.removeItem('__ls_test');
-  } catch (e) {
-    console.warn('localStorage tidak tersedia atau penuh', e);
+  // --- SLIDER LOGIC ---
+  // each slider identified by localStorage key, and has container selector
+  function loadSliderState(storageKey, containerSelector){
+    const el = document.querySelector(`${containerSelector} .slider-wrap`);
+    if(!el) return;
+    const imgs = JSON.parse(ls.getItem(storageKey) || '[]');
+    setupSlider(el, imgs, storageKey);
   }
+
+  function setupSlider(wrapper, imagesArray, storageKey){
+    // wrapper contains .slider .slider-photo, prev/next buttons, file input and counter
+    const sliderPhoto = wrapper.querySelector('.slider-photo');
+    const prevBtn = wrapper.querySelector('.slider-btn.prev');
+    const nextBtn = wrapper.querySelector('.slider-btn.next');
+    const counter = wrapper.querySelector('.slider-counter');
+    const fileInput = wrapper.querySelector('input[type="file"]');
+    // state
+    let idx = 0;
+    let imgs = Array.isArray(imagesArray) ? imagesArray : [];
+    function refresh(){
+      if(imgs.length === 0){
+        sliderPhoto.src = '';
+        sliderPhoto.alt = 'Belum ada foto';
+        counter.textContent = 'Belum ada foto. Tambah foto untuk menampilkan.';
+        wrapper.querySelector('.slider-frame').classList.add('empty');
+      } else {
+        sliderPhoto.src = imgs[idx];
+        sliderPhoto.alt = `Foto ${idx+1} dari ${imgs.length}`;
+        counter.textContent = `${idx+1} / ${imgs.length}`;
+        wrapper.querySelector('.slider-frame').classList.remove('empty');
+      }
+    }
+    // navigation
+    prevBtn.addEventListener('click', ()=>{ if(imgs.length===0) return; idx = (idx-1+imgs.length)%imgs.length; refresh()});
+    nextBtn.addEventListener('click', ()=>{ if(imgs.length===0) return; idx = (idx+1)%imgs.length; refresh()});
+    // add files
+    fileInput && fileInput.addEventListener('change', async (e)=>{
+      const files = Array.from(e.target.files || []);
+      for(const f of files){
+        try{
+          const data = await readFileAsDataURL(f);
+          imgs.push(data);
+        }catch(err){ console.error('Baca file gagal', err) }
+      }
+      ls.setItem(storageKey, JSON.stringify(imgs));
+      idx = imgs.length - 1; // show last added
+      refresh();
+      // clear input so same file can be reselected if needed
+      fileInput.value = '';
+    });
+    // initial set
+    refresh();
+    // expose a small API in DOM for external use if necessary
+    wrapper._sliderState = {imgs, refresh};
+  }
+
+  // find slider wrappers and initialize empty ones too
+  document.querySelectorAll('.slider-wrap').forEach(wrap=>{
+    const key = wrap.dataset.key;
+    const stored = JSON.parse(ls.getItem(key) || '[]');
+    setupSlider(wrap, stored, key);
+  });
+
+  // --- KUMPULAN KARYA YOUTUBE THUMBNAIL ---
+  function getYouTubeID(url){
+    if(!url) return null;
+    try{
+      const u = new URL(url);
+      if(u.hostname.includes('youtu.be')){
+        return u.pathname.slice(1);
+      }
+      if(u.hostname.includes('youtube.com')){
+        return u.searchParams.get('v');
+      }
+    }catch(e){
+      // maybe raw id?
+    }
+    // fallback: try regex
+    const m = url.match(/([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function getYouTubeThumbUrl(id){
+    if(!id) return null;
+    // try high-res first (maxresdefault), fall back to hqdefault in case not available
+    return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+  }
+  function setKaryaYoutube(url){
+    const id = getYouTubeID(url);
+    if(!id) return;
+    const thumbUrl = getYouTubeThumbUrl(id);
+    const img = document.getElementById('karya-youtube-img');
+    const container = document.getElementById('karya-youtube-thumb');
+    const anchor = document.getElementById('karya-youtube-link');
+    // set link to watch
+    anchor.href = `https://www.youtube.com/watch?v=${id}`;
+    // attempt to load maxres thumbnail; if fails, fallback to hqdefault
+    img.src = thumbUrl;
+    img.onerror = () => { img.onerror = null; img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`; };
+    container.classList.remove('hidden');
+    // persist
+    ls.setItem('karyaYouTube', url);
+  }
+
+  document.getElementById('save-karya-youtube').addEventListener('click', ()=>{
+    const url = document.getElementById('karya-youtube-url').value.trim();
+    if(!url) return alert('Masukkan URL YouTube terlebih dahulu.');
+    setKaryaYoutube(url);
+  });
+
+  // --- SOSMED editor (simple) ---
+  const editSosBtn = document.getElementById('edit-sosmed');
+  const sosForm = document.getElementById('sosmed-form');
+  editSosBtn && editSosBtn.addEventListener('click', ()=> sosForm.classList.toggle('hidden'));
+
+  document.getElementById('save-sosmed').addEventListener('click', ()=>{
+    const o = {
+      youtube: document.getElementById('in-youtube').value.trim(),
+      tiktok: document.getElementById('in-tiktok').value.trim(),
+      instagram: document.getElementById('in-ig').value.trim(),
+      email: document.getElementById('in-email').value.trim()
+    };
+    ls.setItem('sosmed', JSON.stringify(o));
+    if(o.youtube) document.getElementById('link-youtube').href = o.youtube;
+    sosForm.classList.add('hidden');
+  });
+  document.getElementById('cancel-sosmed').addEventListener('click', ()=> sosForm.classList.add('hidden'));
+
+  // --- Audio controls (basic) ---
+  const audioFile = document.getElementById('audio-file');
+  const audioEl = document.getElementById('profile-audio');
+  audioFile.addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const data = await readFileAsDataURL(f);
+    const src = data;
+    // set source element
+    const sourceEl = document.getElementById('audio-source');
+    if(sourceEl) sourceEl.src = src;
+    audioEl.load();
+    ls.setItem('profileAudio', src);
+  });
+  document.getElementById('audio-reset').addEventListener('click', ()=>{
+    ls.removeItem('profileAudio');
+    // fallback to original file source (song.mp3)
+    const sourceEl = document.getElementById('audio-source');
+    if(sourceEl) sourceEl.src = 'song.mp3';
+    audioEl.load();
+  });
+
+  // Header reset
+  document.getElementById('reset-header').addEventListener('click', ()=>{
+    ls.removeItem('profilePhoto');
+    document.getElementById('profile-photo').src = 'avatar.svg';
+  });
+
+  // initialize
+  loadProfile();
 });
