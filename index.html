@@ -5,164 +5,181 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Profil Digital — Simple & Elegan</title>
   <link rel="stylesheet" href="styles.css">
-  <meta name="description" content="Profil digital bergaya simple & elegan dengan layout mirip Friendster.">
 </head>
 <body>
   <main class="container">
-    <section class="profile-card" aria-label="Profil pengguna">
-      <!-- Top area with optional background image -->
-      <div class="profile-header" id="profile-header">
-        <div class="header-overlay">
-          <div class="profile-top">
-            <div class="photo-wrapper" aria-hidden="false">
-              <img id="profile-photo" src="avatar.svg" alt="Foto Profil" class="photo">
-            </div>
-
-            <div class="profile-info">
-              <h1 id="full-name" contenteditable="true" aria-label="Nama lengkap">Nama Lengkap</h1>
-              <p class="instansi"><span id="instansi" contenteditable="true">Nama Instansi</span></p>
-              <p class="role">Guru Mata Pelajaran: <span id="mata-pelajaran" contenteditable="true">[Mata Pelajaran]</span></p>
-            </div>
-          </div>
-
-          <!-- small controls for changing photo / background -->
-          <div class="header-actions">
-            <label class="btn btn-sm" for="photo-file">Ganti Foto</label>
-            <input id="photo-file" type="file" accept="image/*" />
-            <label class="btn btn-sm ghost" for="bg-file">Ganti Background</label>
-            <input id="bg-file" type="file" accept="image/*" />
-            <button id="reset-header" class="btn btn-sm ghost" title="Kembalikan foto & background">Reset</button>
-          </div>
+    <header id="profile-header" class="profile-header">
+      <div class="profile-card">
+        <div class="photo-wrap">
+          <img id="profile-photo" class="photo" src="avatar.svg" alt="Foto profil" />
+        </div>
+        <div class="profile-info">
+          <h1 id="full-name" contenteditable="true">Nama Anda</h1>
+          <p class="instansi"><span id="instansi" contenteditable="true">Nama Instansi</span></p>
+          <p class="role">Guru Mata Pelajaran: <span id="mata-pelajaran" contenteditable="true">[Mata Pelajaran]</span></p>
         </div>
       </div>
 
-      <nav class="profile-nav" role="tablist" aria-label="Navigasi profil">
-        <button class="tab active" data-target="beranda" role="tab" aria-selected="true">Beranda</button>
-        <button class="tab" data-target="tentang" role="tab" aria-selected="false">Tentang</button>
-        <button class="tab" data-target="sosmed" role="tab" aria-selected="false">Sosmed</button>
-      </nav>
-
-      <div class="content">
-        <section id="beranda" class="tab-panel" role="tabpanel">
-          <h2>Beranda</h2>
-
-          <nav class="beranda-subnav" aria-label="Subbagian Beranda">
-            <a href="#kegiatan-pengembangan-diri">Kegiatan Pengembangan Diri</a>
-            <a href="#pengalaman-organisasi-profesi">Pengalaman Organisasi & Profesi</a>
-            <a href="#kegiatan-pendampingan">Kegiatan Pendampingan</a>
-            <a href="#kumpulan-karya">Kumpulan Karya</a>
-            <a href="#prestasi-penghargaan">Prestasi & Penghargaan</a>
-          </nav>
-
-          <!-- Sections with icon + editable area (autosaved) -->
-          <article id="kegiatan-pengembangan-diri" class="beranda-section">
-            <div class="section-head">
-              <!-- icon: book/learning -->
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 012-2h11v14H5a2 2 0 01-2-2V6z" fill="currentColor" opacity="0.12"/><path d="M21 6v12a2 2 0 01-2 2H8V4h11a2 2 0 012 2z" fill="currentColor"/></svg>
-              <h3>Kegiatan Pengembangan Diri</h3>
-            </div>
-            <div class="editable" contenteditable="true" data-key="kegiatanPengembanganDiri">Tulis kegiatan pengembangan diri di sini...</div>
-          </article>
-
-          <article id="pengalaman-organisasi-profesi" class="beranda-section">
-            <div class="section-head">
-              <!-- icon: people/organization -->
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 14a4 4 0 00-4 4v1h16v-1a4 4 0 00-4-4H6z" fill="currentColor"/></svg>
-              <h3>Pengalaman Organisasi dan Profesi</h3>
-            </div>
-            <div class="editable" contenteditable="true" data-key="pengalamanOrganisasiProfesi">Tulis pengalaman organisasi dan perjalanan profesi Anda di sini...</div>
-          </article>
-
-          <article id="kegiatan-pendampingan" class="beranda-section">
-            <div class="section-head">
-              <!-- icon: hand/mentoring -->
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12l5 5 9-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <h3>Kegiatan Pendampingan Rekan Sejawat</h3>
-            </div>
-            <div class="editable" contenteditable="true" data-key="kegiatanPendampingan">Tulis kegiatan pendampingan yang pernah Anda lakukan di sini...</div>
-          </article>
-
-          <article id="kumpulan-karya" class="beranda-section">
-            <div class="section-head">
-              <!-- icon: lightbulb/innovation -->
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.9V17a2 2 0 002 2h4a2 2 0 002-2v-2.1A7 7 0 0012 2z" fill="currentColor"/></svg>
-              <h3>Kumpulan Karya Inovasi / Implementasi Pembelajaran Berbasis Teknologi</h3>
-            </div>
-            <div class="editable" contenteditable="true" data-key="kumpulanKarya">Unggah atau deskripsikan karya dan implementasi pembelajaran berbasis teknologi di sini...</div>
-          </article>
-
-          <article id="prestasi-penghargaan" class="beranda-section">
-            <div class="section-head">
-              <!-- icon: trophy -->
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v4a5 5 0 01-10 0V3z" fill="currentColor"/><path d="M5 7a2 2 0 00-2 2v1a5 5 0 005 5h6a5 5 0 005-5V9a2 2 0 00-2-2" fill="none" stroke="currentColor" stroke-width="1"/></svg>
-              <h3>Prestasi dan Penghargaan</h3>
-            </div>
-            <div class="editable" contenteditable="true" data-key="prestasiPenghargaan">Daftar prestasi dan penghargaan Anda...</div>
-          </article>
-
-        </section>
-
-        <section id="tentang" class="tab-panel hidden" role="tabpanel" aria-hidden="true">
-          <h2>Tentang</h2>
-          <div class="editable" contenteditable="true" data-key="tentang">Isi bagian tentang dengan biodata singkat: pengalaman mengajar, visi misi, pendidikan, dan kontak resmi.</div>
-        </section>
-
-        <section id="sosmed" class="tab-panel hidden" role="tabpanel" aria-hidden="true">
-          <h2>Sosial Media</h2>
-          <div class="sosmed-grid">
-            <a id="link-youtube" class="sosmed-item" href="#" target="_blank" rel="noopener" aria-label="YouTube">
-              <!-- youtube icon -->
-              <svg class="sico" viewBox="0 0 24 24"><path d="M22 7s-.2-1.4-.8-2c-.7-.8-1.5-.8-1.9-.9C16.1 4 12 4 12 4s-4.1 0-7.3.1c-.4 0-1.2.1-1.9.9C2.2 5.6 2 7 2 7S2 8.6 2 10.2v3.6C2 15.4 2.2 17 2.2 17s.2 1.4.8 2c.7.8 1.6.8 2 .9 1.5.1 6 .1 6 .1s4.1 0 7.3-.1c.4 0 1.2-.1 1.9-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-3.6C22 8.6 22 7 22 7z" fill="#FF0000"/><path d="M10 14l6-4-6-4v8z" fill="#fff"/></svg>
-              <span>YouTube</span>
-            </a>
-
-            <a id="link-tiktok" class="sosmed-item" href="#" target="_blank" rel="noopener" aria-label="TikTok">
-              <!-- tiktok icon simplified -->
-              <svg class="sico" viewBox="0 0 24 24"><path d="M16 3v10.5A4.5 4.5 0 1111.5 9V7h-2v8.5A6.5 6.5 0 1018 9.5V3h-2z" fill="currentColor"/></svg>
-              <span>TikTok</span>
-            </a>
-
-            <a id="link-ig" class="sosmed-item" href="#" target="_blank" rel="noopener" aria-label="Instagram">
-              <svg class="sico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-              <span>Instagram</span>
-            </a>
-
-            <a id="link-email" class="sosmed-item" href="mailto:" target="_blank" rel="noopener" aria-label="Email">
-              <svg class="sico" viewBox="0 0 24 24"><path d="M3 8l9 6 9-6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M21 19H3V8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-              <span>Email</span>
-            </a>
-          </div>
-
-          <div class="sosmed-edit">
-            <button id="edit-sosmed" class="btn btn-sm">Edit Sosmed</button>
-            <div id="sosmed-form" class="hidden">
-              <label>Youtube: <input type="url" id="in-youtube" placeholder="https://youtube.com/..." /></label>
-              <label>TikTok: <input type="url" id="in-tiktok" placeholder="https://tiktok.com/..." /></label>
-              <label>Instagram: <input type="url" id="in-ig" placeholder="https://instagram.com/..." /></label>
-              <label>Email: <input type="email" id="in-email" placeholder="name@domain.com" /></label>
-              <div class="form-actions">
-                <button id="save-sosmed" class="btn btn-sm">Simpan</button>
-                <button id="cancel-sosmed" class="btn btn-sm ghost">Batal</button>
-              </div>
-            </div>
-          </div>
-        </section>
+      <div class="header-actions">
+        <label class="btn btn-sm" for="photo-file">Ganti Foto</label>
+        <input id="photo-file" type="file" accept="image/*" />
+        <label class="btn btn-sm ghost" for="bg-file">Ganti Background</label>
+        <input id="bg-file" type="file" accept="image/*" />
+        <button id="reset-header" class="btn btn-sm ghost" title="Kembalikan foto & background">Reset</button>
       </div>
-    </section>
+    </header>
+
+    <nav class="profile-nav" role="tablist" aria-label="Navigasi profil">
+      <button class="tab active" data-target="beranda" role="tab" aria-selected="true">Beranda</button>
+      <button class="tab" data-target="tentang" role="tab" aria-selected="false">Tentang</button>
+      <button class="tab" data-target="sosmed" role="tab" aria-selected="false">Sosmed</button>
+    </nav>
+
+    <div class="content">
+      <section id="beranda" class="tab-panel" role="tabpanel">
+        <h2>Beranda</h2>
+
+        <nav class="beranda-subnav" aria-label="Subbagian Beranda">
+          <a href="#kegiatan-pengembangan-diri">Kegiatan Pengembangan Diri</a>
+          <a href="#pengalaman-organisasi-profesi">Pengalaman Organisasi & Profesi</a>
+          <a href="#kegiatan-pendampingan">Kegiatan Pendampingan</a>
+          <a href="#kumpulan-karya">Kumpulan Karya</a>
+          <a href="#prestasi-penghargaan">Prestasi & Penghargaan</a>
+        </nav>
+
+        <!-- subseksi biasa -->
+        <article id="kegiatan-pengembangan-diri" class="beranda-section">
+          <div class="section-head">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 012-2h11v14H5a2 2 0 01-2-2V6z" fill="currentColor" opacity="0.12"/><path d="M21 6v12a2 2 0 01-2 2H8V4h11a2 2 0 012 2z" fill="currentColor"/></svg>
+            <h3>Kegiatan Pengembangan Diri</h3>
+          </div>
+          <div class="editable" contenteditable="true" data-key="kegiatanPengembanganDiri">Tulis kegiatan pengembangan diri di sini...</div>
+        </article>
+
+        <!-- Pengalaman Organisasi & Profesi (dengan slider foto) -->
+        <article id="pengalaman-organisasi-profesi" class="beranda-section">
+          <div class="section-head">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM6 14a4 4 0 00-4 4v1h16v-1a4 4 0 00-4-4H6z" fill="currentColor"/></svg>
+            <h3>Pengalaman Organisasi dan Profesi</h3>
+          </div>
+
+          <div class="editable" contenteditable="true" data-key="pengalamanOrganisasiProfesi">Tulis pengalaman organisasi dan perjalanan profesi Anda di sini...</div>
+
+          <div class="slider-wrap" data-key="pengalamanFotos">
+            <div class="slider">
+              <button class="slider-btn prev" data-action="prev" aria-label="Foto sebelumnya">‹</button>
+              <div class="slider-frame">
+                <img class="slider-photo" alt="Foto pengalaman organisasi" src="">
+                <div class="slider-caption"></div>
+              </div>
+              <button class="slider-btn next" data-action="next" aria-label="Foto selanjutnya">›</button>
+            </div>
+            <div class="slider-controls">
+              <label class="btn btn-sm" for="pengalaman-files">Tambah Foto</label>
+              <input id="pengalaman-files" type="file" accept="image/*" multiple />
+              <span class="slider-counter" aria-live="polite"></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Kegiatan Pendampingan (dengan slider foto) -->
+        <article id="kegiatan-pendampingan" class="beranda-section">
+          <div class="section-head">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12l5 5 9-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h3>Kegiatan Pendampingan Rekan Sejawat</h3>
+          </div>
+
+          <div class="editable" contenteditable="true" data-key="kegiatanPendampingan">Tulis kegiatan pendampingan yang pernah Anda lakukan di sini...</div>
+
+          <div class="slider-wrap" data-key="pendampinganFotos">
+            <div class="slider">
+              <button class="slider-btn prev" data-action="prev" aria-label="Foto sebelumnya">‹</button>
+              <div class="slider-frame">
+                <img class="slider-photo" alt="Foto kegiatan pendampingan" src="">
+                <div class="slider-caption"></div>
+              </div>
+              <button class="slider-btn next" data-action="next" aria-label="Foto selanjutnya">›</button>
+            </div>
+            <div class="slider-controls">
+              <label class="btn btn-sm" for="pendampingan-files">Tambah Foto</label>
+              <input id="pendampingan-files" type="file" accept="image/*" multiple />
+              <span class="slider-counter" aria-live="polite"></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Kumpulan Karya (youtube thumbnail preview + editable) -->
+        <article id="kumpulan-karya" class="beranda-section">
+          <div class="section-head">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.9V17a2 2 0 002 2h4a2 2 0 002-2v-2.1A7 7 0 0012 2z" fill="currentColor"/></svg>
+            <h3>Kumpulan Karya Inovasi / Implementasi Pembelajaran Berbasis Teknologi</h3>
+          </div>
+
+          <div class="editable" contenteditable="true" data-key="kumpulanKarya">Unggah atau deskripsikan karya dan implementasi pembelajaran berbasis teknologi di sini...</div>
+
+          <div class="karya-youtube">
+            <label>Tautan YouTube (contoh: https://www.youtube.com/watch?v=sgFhFEvrbbA)</label>
+            <div class="karya-youtube-inputs">
+              <input type="url" id="karya-youtube-url" placeholder="Masukkan URL YouTube..." />
+              <button id="save-karya-youtube" class="btn btn-sm">Simpan Thumbnail</button>
+            </div>
+            <div id="karya-youtube-thumb" class="karya-youtube-thumb hidden" aria-live="polite">
+              <a id="karya-youtube-link" href="#" target="_blank" rel="noopener">
+                <img id="karya-youtube-img" src="" alt="Thumbnail video YouTube">
+              </a>
+              <div class="karya-youtube-note">Klik thumbnail untuk membuka video di YouTube.</div>
+            </div>
+          </div>
+        </article>
+
+        <article id="prestasi-penghargaan" class="beranda-section">
+          <div class="section-head">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v4a5 5 0 01-10 0V3z" fill="currentColor"/><path d="M5 7a2 2 0 00-2 2v1a5 5 0 005 5h6a5 5 0 005-5V9a2 2 0 00-2-2" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+            <h3>Prestasi dan Penghargaan</h3>
+          </div>
+          <div class="editable" contenteditable="true" data-key="prestasiPenghargaan">Daftar prestasi dan penghargaan Anda...</div>
+        </article>
+
+      </section>
+
+      <section id="tentang" class="tab-panel hidden" role="tabpanel" aria-hidden="true">
+        <h2>Tentang</h2>
+        <div class="editable" contenteditable="true" data-key="tentang">Isi bagian tentang dengan biodata singkat: pengalaman mengajar, visi misi, pendidikan, dan kontak resmi.</div>
+      </section>
+
+      <section id="sosmed" class="tab-panel hidden" role="tabpanel" aria-hidden="true">
+        <h2>Sosial Media</h2>
+        <div class="sosmed-grid">
+          <a id="link-youtube" class="sosmed-item" href="#" target="_blank" rel="noopener" aria-label="YouTube">YouTube</a>
+        </div>
+
+        <div class="sosmed-editor">
+          <button id="edit-sosmed" class="btn btn-sm">Edit Sosmed</button>
+          <div id="sosmed-form" class="hidden">
+            <label>Youtube: <input type="url" id="in-youtube" placeholder="https://youtube.com/..." /></label>
+            <label>TikTok: <input type="url" id="in-tiktok" placeholder="https://tiktok.com/..." /></label>
+            <label>Instagram: <input type="url" id="in-ig" placeholder="https://instagram.com/..." /></label>
+            <label>Email: <input type="email" id="in-email" placeholder="name@domain.com" /></label>
+            <div class="form-actions">
+              <button id="save-sosmed" class="btn btn-sm">Simpan</button>
+              <button id="cancel-sosmed" class="btn btn-sm ghost">Batal</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
 
     <footer class="site-footer">
-      <!-- Musik ditempatkan di paling bawah sesuai permintaan -->
       <div class="audio-bottom">
         <audio id="profile-audio" controls preload="none">
           <source id="audio-source" src="song.mp3" type="audio/mpeg">
           Browser Anda tidak mendukung audio.
         </audio>
-
         <div class="audio-actions">
           <label class="btn btn-sm" for="audio-file">Ganti Lagu</label>
           <input id="audio-file" type="file" accept="audio/*" />
           <button id="audio-reset" class="btn btn-sm ghost">Reset</button>
-          <small class="audio-note">File lokal akan disimpan di browser (localStorage). Batasi ukuran file untuk kenyamanan.</small>
         </div>
       </div>
 
