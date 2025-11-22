@@ -1,0 +1,250 @@
+:root{
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --muted: #65707a;
+  --accent: #0b78d1;
+  --accent-2: #0b5fa8;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(15,23,42,0.08);
+  --gap: 16px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:linear-gradient(180deg, #fbfcfd, var(--bg));
+  color:#0f1724;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:28px 16px;
+}
+
+/* Layout */
+.container{
+  max-width:900px;
+  margin:0 auto;
+}
+
+/* Profile Card */
+.profile-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:0;
+  overflow:hidden;
+}
+
+/* Header area (with background image) */
+.profile-header{
+  background:linear-gradient(90deg, rgba(11,120,209,0.06), rgba(11,95,168,0.03));
+  min-height:140px;
+  position:relative;
+  background-size:cover;
+  background-position:center;
+}
+.header-overlay{
+  backdrop-filter: blur(0.5px);
+  padding:16px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* Top row: photo + info */
+.profile-top{
+  display:flex;
+  gap:var(--gap);
+  align-items:center;
+}
+
+/* Photo */
+.photo-wrapper{
+  width:112px;
+  height:112px;
+  flex:0 0 112px;
+  border-radius:14px;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px rgba(11,120,209,0.12);
+  border:4px solid rgba(255,255,255,0.6);
+}
+.photo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Info */
+.profile-info h1{
+  margin:0;
+  font-size:20px;
+  letter-spacing:0.2px;
+}
+.profile-info [contenteditable="true"]:focus{
+  outline:2px dashed rgba(11,120,209,0.18);
+  background:rgba(255,255,255,0.6);
+  border-radius:6px;
+}
+.instansi{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:14px;
+}
+.role{
+  margin:6px 0 0;
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* header actions */
+.header-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-left:auto;
+}
+input[type="file"]{display:none}
+
+/* Nav */
+.profile-nav{
+  display:flex;
+  gap:8px;
+  margin-top:0;
+  border-top:1px solid #eef2f6;
+  padding:14px 18px;
+}
+.tab{
+  background:transparent;
+  border:0;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  color:var(--muted);
+  font-weight:600;
+  transition:all .18s ease;
+}
+.tab:hover{color:var(--accent)}
+.tab.active{
+  background:linear-gradient(90deg, rgba(11,120,209,0.08), rgba(11,95,168,0.06));
+  color:var(--accent-2);
+  box-shadow:inset 0 -2px 0 rgba(11,120,209,0.06);
+}
+
+/* Content area */
+.content{
+  margin-top:0;
+  padding:14px 18px 22px;
+}
+.tab-panel{
+  padding:8px 4px 18px;
+  line-height:1.6;
+  color:#0f1724;
+}
+.hidden{display:none}
+
+/* Beranda subsections */
+.beranda-subnav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:8px 0 12px;
+}
+.beranda-subnav a{
+  text-decoration:none;
+  color:var(--accent-2);
+  background:#f1f6fb;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:600;
+  font-size:13px;
+}
+
+/* section */
+.beranda-section{
+  border-top:1px dashed #eef2f6;
+  padding:12px 0;
+  margin-top:12px;
+}
+.section-head{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.icon{width:28px;height:28px;color:var(--accent-2)}
+.section-head h3{margin:0;font-size:16px}
+.editable{
+  padding:12px;
+  background:#fbfcfe;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:14px;
+  margin-top:8px;
+  min-height:48px;
+}
+
+/* Sosmed grid */
+.sosmed-grid{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.sosmed-item{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:8px 10px;
+  border-radius:10px;
+  background:#f8fbff;
+  color:var(--accent-2);
+  text-decoration:none;
+  font-weight:700;
+}
+.sosmed-item .sico{width:20px;height:20px;color:var(--accent-2)}
+
+/* sosmed edit form */
+.sosmed-edit{margin-top:12px}
+#sosmed-form label{display:block;margin:8px 0}
+#sosmed-form input{width:100%;padding:8px;border-radius:8px;border:1px solid #eef2f6}
+
+/* Audio bottom */
+.site-footer{padding:18px; text-align:center}
+.audio-bottom{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.audio-bottom audio{width:320px;max-width:100%}
+.audio-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.audio-note{color:var(--muted);font-size:12px}
+
+/* Buttons */
+.btn{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#fff;
+  border:0;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:13px;
+}
+.btn-sm{padding:6px 10px;font-size:13px}
+.btn.ghost{
+  background:transparent;
+  color:var(--accent-2);
+  border:1px solid #e6f0fb;
+  box-shadow:none;
+}
+
+/* Copyright */
+copyright, .copyright{ color:var(--muted); font-size:13px; margin-top:8px; }
+
+/* Responsive */
+@media (max-width:720px){
+  .profile-top{flex-direction:row; gap:12px}
+  .photo-wrapper{width:84px;height:84px;flex:0 0 84px;border-radius:10px}
+  .profile-info h1{font-size:18px}
+  .header-actions{justify-content:flex-start;flex-wrap:wrap}
+}
