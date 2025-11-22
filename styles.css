@@ -1,63 +1,241 @@
-/* dasar styling (dipertahankan dari yang ada) */
-:root{
-  --accent:#0b78d1;
-  --accent-2:#0b5fa8;
-  --muted:#6b7280;
-}
-*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-body{margin:0;background:#f7fbff;color:#0f1724}
-.container{max-width:920px;margin:18px auto;padding:12px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(3,12,34,0.06);overflow:hidden}
-.profile-header{display:flex;gap:14px;align-items:center;padding:14px;border-bottom:1px solid #eef2f6}
-.profile-card{display:flex;gap:12px;align-items:center}
-.photo-wrap{width:92px;height:92px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#f3f7fb,#fff);display:flex;align-items:center;justify-content:center}
-.photo{width:100%;height:100%;object-fit:cover;display:block}
-.profile-info h1{margin:0;font-size:20px}
-.profile-info [contenteditable="true"]:focus{outline:2px dashed rgba(11,120,209,0.18);background:rgba(255,255,255,0.6);border-radius:6px}
-.instansi{margin:6px 0 0;color:var(--muted);font-size:14px}
-.role{margin:6px 0 0;font-size:14px;color:var(--muted)}
-.header-actions{display:flex;gap:8px;align-items:center;margin-left:auto}
-input[type="file"]{display:none}
+// Persists editable fields, images, sosmed links and audio to localStorage.
+// Keys used in localStorage:
+// fullName, instansi, mataPelajaran, profilePhoto, headerBg, pengalamanOrganisasiProfesi,
+// kegiatanPendampingan, kumpulanKarya, prestasiPenghargaan, tentang, sosmed (JSON), profileAudio
+document.addEventListener('DOMContentLoaded', () => {
+  const ls = window.localStorage;
 
-/* nav */
-.profile-nav{display:flex;gap:8px;margin-top:0;border-top:1px solid #eef2f6;padding:14px 18px}
-.tab{background:transparent;border:0;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;transition:all .18s ease}
-.tab.active{background:linear-gradient(90deg, rgba(11,120,209,0.08), rgba(11,95,168,0.06));color:var(--accent-2);box-shadow:inset 0 -2px 0 rgba(11,120,209,0.06)}
-.content{margin-top:0;padding:14px 18px 22px}
-.hidden{display:none}
+  // Tabs
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  function activate(target, tabEl){
+    tabs.forEach(t=>t.classList.remove('active'));
+    tabEl && tabEl.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p=>{
+      if(p.id===target){ p.classList.remove('hidden'); p.setAttribute('aria-hidden','false')}
+      else { p.classList.add('hidden'); p.setAttribute('aria-hidden','true')}
+    });
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => activate(tab.dataset.target, tab)));
+  const initialHash = (location.hash || '#beranda').replace('#','');
+  const initialTab = tabs.find(t=>t.dataset.target===initialHash) || tabs[0];
+  activate(initialTab.dataset.target, initialTab);
 
-/* beranda subsections */
-.beranda-subnav{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
-.beranda-subnav a{text-decoration:none;color:var(--accent-2);background:#f1f6fb;padding:6px 10px;border-radius:8px;font-weight:600;font-size:13px}
+  // Utility: read file as dataURL
+  function readFileAsDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); })}
 
-/* sections */
-.beranda-section{border-top:1px dashed #eef2f6;padding:12px 0;margin-top:12px}
-.section-head{display:flex;gap:10px;align-items:center}
-.icon{width:28px;height:28px;color:var(--accent-2)}
-.section-head h3{margin:0;font-size:16px}
-.editable{padding:12px;background:#fbfcfe;border-radius:8px;min-height:48px}
+  // Load profile basics
+  function loadProfile(){
+    const fullName = ls.getItem('fullName'); if(fullName) document.getElementById('full-name').textContent = fullName;
+    const inst = ls.getItem('instansi'); if(inst) document.getElementById('instansi').textContent = inst;
+    const mata = ls.getItem('mataPelajaran'); if(mata) document.getElementById('mata-pelajaran').textContent = mata;
+    const photo = ls.getItem('profilePhoto'); if(photo) document.getElementById('profile-photo').src = photo;
+    // load editable sections text
+    const keys = [
+      {key:'kegiatanPengembanganDiri', sel:'#kegiatan-pengembangan-diri .editable'},
+      {key:'pengalamanOrganisasiProfesi', sel:'#pengalaman-organisasi-profesi .editable'},
+      {key:'kegiatanPendampingan', sel:'#kegiatan-pendampingan .editable'},
+      {key:'kumpulanKarya', sel:'#kumpulan-karya .editable'},
+      {key:'prestasiPenghargaan', sel:'#prestasi-penghargaan .editable'},
+      {key:'tentang', sel:'#tentang .editable'}
+    ];
+    keys.forEach(k=>{
+      const v = ls.getItem(k.key);
+      if(v && document.querySelector(k.sel)) document.querySelector(k.sel).innerHTML = v;
+    });
+    // load slider images
+    loadSliderState('pengalamanFotos','#pengalaman-organisasi-profesi');
+    loadSliderState('pendampinganFotos','#kegiatan-pendampingan');
+    // load youtube karya
+    const yt = ls.getItem('karyaYouTube');
+    if(yt) setKaryaYoutube(yt);
+    // load sosmed
+    const sos = ls.getItem('sosmed');
+    if(sos){
+      try{
+        const o = JSON.parse(sos);
+        if(o.youtube && document.getElementById('link-youtube')) { document.getElementById('link-youtube').href = o.youtube }
+      }catch(e){}
+    }
+  }
 
-/* slider styles */
-.slider-wrap{margin-top:10px}
-.slider{display:flex;align-items:center;gap:12px}
-.slider-frame{width:320px;height:180px;border-radius:8px;overflow:hidden;background:#eef6ff;display:flex;align-items:center;justify-content:center;position:relative}
-.slider-frame img{width:100%;height:100%;object-fit:cover;display:block}
-.slider-caption{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,0.45);color:#fff;padding:6px 8px;border-radius:6px;font-size:12px}
-.slider-btn{width:36px;height:36px;border-radius:8px;border:0;background:#fff;box-shadow:0 1px 4px rgba(3,12,34,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center}
-.slider-controls{display:flex;gap:8px;align-items:center;margin-top:8px}
-.slider-counter{color:var(--muted);font-size:13px}
+  // Save text fields
+  document.getElementById('full-name').addEventListener('input', e=> ls.setItem('fullName', e.target.textContent.trim()));
+  document.getElementById('instansi').addEventListener('input', e=> ls.setItem('instansi', e.target.textContent.trim()));
+  document.getElementById('mata-pelajaran').addEventListener('input', e=> ls.setItem('mataPelajaran', e.target.textContent.trim()));
 
-/* karya youtube */
-.karya-youtube{margin-top:12px}
-.karya-youtube-inputs{display:flex;gap:8px;align-items:center;margin:8px 0}
-.karya-youtube-inputs input{flex:1;padding:8px;border-radius:8px;border:1px solid #e6eef9}
-.karya-youtube-thumb{margin-top:8px;display:flex;flex-direction:column;gap:8px}
-.karya-youtube-thumb img{width:320px;height:180px;object-fit:cover;border-radius:8px;border:1px solid #e6eef9}
-.karya-youtube-note{font-size:13px;color:var(--muted)}
+  // Save editable sections autosave
+  const editableSections = Array.from(document.querySelectorAll('.editable'));
+  editableSections.forEach(el=>{
+    const key = el.dataset.key;
+    if(!key) return;
+    el.addEventListener('input', () => {
+      ls.setItem(key, el.innerHTML);
+    });
+  });
 
-/* footer */
-.site-footer{padding:12px;border-top:1px solid #eef2f6}
-.audio-bottom{display:flex;gap:12px;align-items:center}
-.btn{padding:8px 10px;border-radius:8px;background:var(--accent);color:#fff;border:0;cursor:pointer}
-.btn.ghost{background:transparent;color:var(--accent-2);border:1px solid rgba(11,95,168,0.08)}
-.btn-sm{padding:6px 8px;font-size:13px;border-radius:6px}
-.form-actions{display:flex;gap:8px;margin-top:8px}
+  // Profile photo/background handlers (kept basic)
+  const photoFile = document.getElementById('photo-file');
+  photoFile.addEventListener('change', async (e)=>{
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const data = await readFileAsDataURL(f);
+    document.getElementById('profile-photo').src = data;
+    ls.setItem('profilePhoto', data);
+  });
+
+  // --- SLIDER LOGIC ---
+  // each slider identified by localStorage key, and has container selector
+  function loadSliderState(storageKey, containerSelector){
+    const el = document.querySelector(`${containerSelector} .slider-wrap`);
+    if(!el) return;
+    const imgs = JSON.parse(ls.getItem(storageKey) || '[]');
+    setupSlider(el, imgs, storageKey);
+  }
+
+  function setupSlider(wrapper, imagesArray, storageKey){
+    // wrapper contains .slider .slider-photo, prev/next buttons, file input and counter
+    const sliderPhoto = wrapper.querySelector('.slider-photo');
+    const prevBtn = wrapper.querySelector('.slider-btn.prev');
+    const nextBtn = wrapper.querySelector('.slider-btn.next');
+    const counter = wrapper.querySelector('.slider-counter');
+    const fileInput = wrapper.querySelector('input[type="file"]');
+    // state
+    let idx = 0;
+    let imgs = Array.isArray(imagesArray) ? imagesArray : [];
+    function refresh(){
+      if(imgs.length === 0){
+        sliderPhoto.src = '';
+        sliderPhoto.alt = 'Belum ada foto';
+        counter.textContent = 'Belum ada foto. Tambah foto untuk menampilkan.';
+        wrapper.querySelector('.slider-frame').classList.add('empty');
+      } else {
+        sliderPhoto.src = imgs[idx];
+        sliderPhoto.alt = `Foto ${idx+1} dari ${imgs.length}`;
+        counter.textContent = `${idx+1} / ${imgs.length}`;
+        wrapper.querySelector('.slider-frame').classList.remove('empty');
+      }
+    }
+    // navigation
+    prevBtn.addEventListener('click', ()=>{ if(imgs.length===0) return; idx = (idx-1+imgs.length)%imgs.length; refresh()});
+    nextBtn.addEventListener('click', ()=>{ if(imgs.length===0) return; idx = (idx+1)%imgs.length; refresh()});
+    // add files
+    fileInput && fileInput.addEventListener('change', async (e)=>{
+      const files = Array.from(e.target.files || []);
+      for(const f of files){
+        try{
+          const data = await readFileAsDataURL(f);
+          imgs.push(data);
+        }catch(err){ console.error('Baca file gagal', err) }
+      }
+      ls.setItem(storageKey, JSON.stringify(imgs));
+      idx = imgs.length - 1; // show last added
+      refresh();
+      // clear input so same file can be reselected if needed
+      fileInput.value = '';
+    });
+    // initial set
+    refresh();
+    // expose a small API in DOM for external use if necessary
+    wrapper._sliderState = {imgs, refresh};
+  }
+
+  // find slider wrappers and initialize empty ones too
+  document.querySelectorAll('.slider-wrap').forEach(wrap=>{
+    const key = wrap.dataset.key;
+    const stored = JSON.parse(ls.getItem(key) || '[]');
+    setupSlider(wrap, stored, key);
+  });
+
+  // --- KUMPULAN KARYA YOUTUBE THUMBNAIL ---
+  function getYouTubeID(url){
+    if(!url) return null;
+    try{
+      const u = new URL(url);
+      if(u.hostname.includes('youtu.be')){
+        return u.pathname.slice(1);
+      }
+      if(u.hostname.includes('youtube.com')){
+        return u.searchParams.get('v');
+      }
+    }catch(e){
+      // maybe raw id?
+    }
+    // fallback: try regex
+    const m = url.match(/([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function getYouTubeThumbUrl(id){
+    if(!id) return null;
+    // try high-res first (maxresdefault), fall back to hqdefault in case not available
+    return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+  }
+  function setKaryaYoutube(url){
+    const id = getYouTubeID(url);
+    if(!id) return;
+    const thumbUrl = getYouTubeThumbUrl(id);
+    const img = document.getElementById('karya-youtube-img');
+    const container = document.getElementById('karya-youtube-thumb');
+    const anchor = document.getElementById('karya-youtube-link');
+    // set link to watch
+    anchor.href = `https://www.youtube.com/watch?v=${id}`;
+    // attempt to load maxres thumbnail; if fails, fallback to hqdefault
+    img.src = thumbUrl;
+    img.onerror = () => { img.onerror = null; img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`; };
+    container.classList.remove('hidden');
+    // persist
+    ls.setItem('karyaYouTube', url);
+  }
+
+  document.getElementById('save-karya-youtube').addEventListener('click', ()=>{
+    const url = document.getElementById('karya-youtube-url').value.trim();
+    if(!url) return alert('Masukkan URL YouTube terlebih dahulu.');
+    setKaryaYoutube(url);
+  });
+
+  // --- SOSMED editor (simple) ---
+  const editSosBtn = document.getElementById('edit-sosmed');
+  const sosForm = document.getElementById('sosmed-form');
+  editSosBtn && editSosBtn.addEventListener('click', ()=> sosForm.classList.toggle('hidden'));
+
+  document.getElementById('save-sosmed').addEventListener('click', ()=>{
+    const o = {
+      youtube: document.getElementById('in-youtube').value.trim(),
+      tiktok: document.getElementById('in-tiktok').value.trim(),
+      instagram: document.getElementById('in-ig').value.trim(),
+      email: document.getElementById('in-email').value.trim()
+    };
+    ls.setItem('sosmed', JSON.stringify(o));
+    if(o.youtube) document.getElementById('link-youtube').href = o.youtube;
+    sosForm.classList.add('hidden');
+  });
+  document.getElementById('cancel-sosmed').addEventListener('click', ()=> sosForm.classList.add('hidden'));
+
+  // --- Audio controls (basic) ---
+  const audioFile = document.getElementById('audio-file');
+  const audioEl = document.getElementById('profile-audio');
+  audioFile.addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const data = await readFileAsDataURL(f);
+    const src = data;
+    // set source element
+    const sourceEl = document.getElementById('audio-source');
+    if(sourceEl) sourceEl.src = src;
+    audioEl.load();
+    ls.setItem('profileAudio', src);
+  });
+  document.getElementById('audio-reset').addEventListener('click', ()=>{
+    ls.removeItem('profileAudio');
+    // fallback to original file source (song.mp3)
+    const sourceEl = document.getElementById('audio-source');
+    if(sourceEl) sourceEl.src = 'song.mp3';
+    audioEl.load();
+  });
+
+  // Header reset
+  document.getElementById('reset-header').addEventListener('click', ()=>{
+    ls.removeItem('profilePhoto');
+    document.getElementById('profile-photo').src = 'avatar.svg';
+  });
+
+  // initialize
+  loadProfile();
+});
